@@ -77,53 +77,58 @@ const LandingPage = () => {
         };
     }, []);
 
-    // Optimized mouse move handler with throttling
+    // Logo animation: handle both mouse and touch events only on the logo
     useEffect(() => {
+        const logo = logo3DRef.current;
+        if (!logo) return;
         let ticking = false;
 
+        const animate = (clientX, clientY) => {
+            const rect = logo.getBoundingClientRect();
+            const logoX = rect.left + rect.width / 2;
+            const logoY = rect.top + rect.height / 2;
+            const dx = clientX - logoX;
+            const dy = clientY - logoY;
+            const maxTilt = 20;
+            const rotateY = Math.max(-maxTilt, Math.min(maxTilt, dx / 12));
+            const rotateX = Math.max(-maxTilt, Math.min(maxTilt, -dy / 12));
+            logo.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        };
+
         const handleMouseMove = (e) => {
-            if (!ticking && logo3DRef.current) {
+            if (!ticking) {
                 requestAnimationFrame(() => {
-                    const rect = logo3DRef.current.getBoundingClientRect();
-                    const logoX = rect.left + rect.width / 2;
-                    const logoY = rect.top + rect.height / 2;
-                    const dx = e.clientX - logoX;
-                    const dy = e.clientY - logoY;
-                    const maxTilt = 20; // Reduced tilt for better performance
-                    const rotateY = Math.max(-maxTilt, Math.min(maxTilt, dx / 12));
-                    const rotateX = Math.max(-maxTilt, Math.min(maxTilt, -dy / 12));
-                    logo3DRef.current.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    animate(e.clientX, e.clientY);
                     ticking = false;
                 });
                 ticking = true;
             }
         };
-
-        // Touch event handler for mobile
+        const handleMouseLeave = () => {
+            logo.style.transform = '';
+        };
         const handleTouchMove = (e) => {
-            if (!ticking && logo3DRef.current && e.touches && e.touches.length === 1) {
+            if (!ticking && e.touches && e.touches.length === 1) {
                 requestAnimationFrame(() => {
                     const touch = e.touches[0];
-                    const rect = logo3DRef.current.getBoundingClientRect();
-                    const logoX = rect.left + rect.width / 2;
-                    const logoY = rect.top + rect.height / 2;
-                    const dx = touch.clientX - logoX;
-                    const dy = touch.clientY - logoY;
-                    const maxTilt = 20;
-                    const rotateY = Math.max(-maxTilt, Math.min(maxTilt, dx / 12));
-                    const rotateX = Math.max(-maxTilt, Math.min(maxTilt, -dy / 12));
-                    logo3DRef.current.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    animate(touch.clientX, touch.clientY);
                     ticking = false;
                 });
                 ticking = true;
             }
         };
-
-        window.addEventListener('mousemove', handleMouseMove, { passive: true });
-        window.addEventListener('touchmove', handleTouchMove, { passive: true });
+        const handleTouchEnd = () => {
+            logo.style.transform = '';
+        };
+        logo.addEventListener('mousemove', handleMouseMove, { passive: true });
+        logo.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+        logo.addEventListener('touchmove', handleTouchMove, { passive: true });
+        logo.addEventListener('touchend', handleTouchEnd, { passive: true });
         return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('touchmove', handleTouchMove);
+            logo.removeEventListener('mousemove', handleMouseMove);
+            logo.removeEventListener('mouseleave', handleMouseLeave);
+            logo.removeEventListener('touchmove', handleTouchMove);
+            logo.removeEventListener('touchend', handleTouchEnd);
         };
     }, []);
 
@@ -161,7 +166,7 @@ const LandingPage = () => {
     ), [timeLeft]);
 
     return (
-        <div className="relative h-screen bg-gradient-to-br from-[#0a1a2f] via-[#0a1a2f] to-[#0e223a] flex flex-col justify-between overflow-hidden border-0 outline-none">
+        <div className="relative h-screen bg-gradient-to-br from-[#0a1a2f] via-[#0a1a2f] to-[#0e223a] flex flex-col justify-between overflow-hidden border-0 outline-none select-none">
             {/* Top Bar */}
             <header className="flex justify-between items-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-6">
                 <div className="flex items-center gap-2">
@@ -216,8 +221,8 @@ const LandingPage = () => {
             />
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col justify-center items-center relative z-10 px-3 sm:px-4 md:px-6">
-                <div className="max-w-xl w-full text-center mt-6 sm:mt-8 md:mt-16">
+            <main className="flex-1 flex flex-col justify-center items-center relative z-10 px-0 sm:px-0 md:px-0 m-0">
+                <div className="max-w-xl w-full text-center mt-0 sm:mt-0 md:mt-0">
                     {/* Centered logo above heading */}
                     <img
                         ref={logo3DRef}
@@ -244,24 +249,26 @@ const LandingPage = () => {
                 </div>
             </main>
 
-            {/* Social Icons Bottom Left */}
-            <footer className="absolute left-4 sm:left-6 md:left-8 bottom-4 sm:bottom-6 flex gap-3 sm:gap-4 z-20">
-                {socialLinks.map(({ href, icon, label }) => (
-                    <a
-                        key={label}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Follow us on ${label}`}
-                        className="text-white/70 hover:text-[#52ffc9] text-lg sm:text-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#52ffc9] focus:ring-opacity-50 rounded-full p-1"
-                    >
-                        {icon}
-                    </a>
-                ))}
+            {/* Responsive Footer */}
+            <footer className="w-full flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-2 sm:gap-4 px-4 py-4 sm:px-8 sm:py-6 z-20 bg-transparent">
+                <div className="flex gap-4 sm:gap-4 mb-1 sm:mb-0">
+                    {socialLinks.map(({ href, icon, label }) => (
+                        <a
+                            key={label}
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Follow us on ${label}`}
+                            className="text-white/70 hover:text-[#52ffc9] text-xl sm:text-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#52ffc9] focus:ring-opacity-50 rounded-full p-1"
+                        >
+                            {icon}
+                        </a>
+                    ))}
+                </div>
+                <div className="text-xs text-white/40 text-center sm:text-right">
+                    © 2025 WibeeX. All Rights Reserved.
+                </div>
             </footer>
-
-            {/* Copyright */}
-            <div className="absolute bottom-4 right-4 sm:right-6 md:right-8 text-xs text-white/40 z-20">© 2025 WibeeX. All Rights Reserved.</div>
 
             <style>{`
                 /* Optimize animations for performance */
