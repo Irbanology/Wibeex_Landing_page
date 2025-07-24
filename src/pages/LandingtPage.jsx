@@ -1,319 +1,409 @@
+// import React, { useRef, useEffect, useState, useCallback, useMemo } from "react";
+// import logoPng from '../assets/logo_Png.png';
+// import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
+
+// const socialLinks = [
+//   { href: "https://instagram.com/wibe_ex", icon: <FaInstagram />, label: "Instagram" },
+//   { href: "https://x.com/wibe_ex", icon: <FaTwitter />, label: "X" },
+//   { href: "https://www.facebook.com/people/WibeeX/61578853760526/", icon: <FaFacebookF />, label: "Facebook" },
+// ];
+
+// const targetDate = new Date("2025-10-10T00:00:00").getTime();
+
+// const LandingPage = () => {
+//   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+//   const [isLoaded, setIsLoaded] = useState(false);
+//   const logo3DRef = useRef();
+//   const blobs = useRef([]);
+
+//   useEffect(() => {
+//     const calculateTimeLeft = () => {
+//       const now = new Date().getTime();
+//       const difference = targetDate - now;
+//       if (difference > 0) {
+//         setTimeLeft({
+//           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+//           hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+//           minutes: Math.floor((difference / 1000 / 60) % 60),
+//           seconds: Math.floor((difference / 1000) % 60),
+//         });
+//       }
+//     };
+
+//     calculateTimeLeft();
+//     const timer = setInterval(calculateTimeLeft, 1000);
+//     return () => clearInterval(timer);
+//   }, []);
+
+//   useEffect(() => {
+//     const animateBlobs = () => {
+//       const t = Date.now() / 2000;
+//       const w = window.innerWidth;
+//       const h = window.innerHeight;
+
+//       blobs.current.forEach((blob, index) => {
+//         const angleOffset = index * Math.PI / 2;
+//         const x = w * 0.5 + Math.cos(t + angleOffset) * w * 0.2 - 120;
+//         const y = h * 0.5 + Math.sin(t + angleOffset) * h * 0.2 - 120;
+//         if (blob) {
+//           blob.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+//           blob.style.display = 'block';
+//         }
+//       });
+//     };
+
+//     let animationId = requestAnimationFrame(function animate() {
+//       animateBlobs();
+//       animationId = requestAnimationFrame(animate);
+//     });
+
+//     return () => cancelAnimationFrame(animationId);
+//   }, []);
+
+//   useEffect(() => {
+//     const logo = logo3DRef.current;
+//     if (!logo) return;
+//     let ticking = false;
+
+//     const animate = (clientX, clientY) => {
+//       const rect = logo.getBoundingClientRect();
+//       const logoX = rect.left + rect.width / 2;
+//       const logoY = rect.top + rect.height / 2;
+//       const dx = clientX - logoX;
+//       const dy = clientY - logoY;
+//       const maxTilt = 20;
+//       const rotateY = Math.max(-maxTilt, Math.min(maxTilt, dx / 12));
+//       const rotateX = Math.max(-maxTilt, Math.min(maxTilt, -dy / 12));
+//       logo.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+//     };
+
+//     const handleMouseMove = (e) => {
+//       if (!ticking) {
+//         requestAnimationFrame(() => {
+//           animate(e.clientX, e.clientY);
+//           ticking = false;
+//         });
+//         ticking = true;
+//       }
+//     };
+
+//     const handleTouchMove = (e) => {
+//       if (!ticking && e.touches.length === 1) {
+//         requestAnimationFrame(() => {
+//           animate(e.touches[0].clientX, e.touches[0].clientY);
+//           ticking = false;
+//         });
+//         ticking = true;
+//       }
+//     };
+
+//     const resetTransform = () => logo.style.transform = '';
+
+//     logo.addEventListener('mousemove', handleMouseMove);
+//     logo.addEventListener('mouseleave', resetTransform);
+//     logo.addEventListener('touchmove', handleTouchMove);
+//     logo.addEventListener('touchend', resetTransform);
+
+//     return () => {
+//       logo.removeEventListener('mousemove', handleMouseMove);
+//       logo.removeEventListener('mouseleave', resetTransform);
+//       logo.removeEventListener('touchmove', handleTouchMove);
+//       logo.removeEventListener('touchend', resetTransform);
+//     };
+//   }, []);
+
+//   const handleImageLoad = useCallback(() => setIsLoaded(true), []);
+//   const handleImageError = useCallback(() => setIsLoaded(true), []);
+
+//   const countdownDisplay = useMemo(() => (
+//     <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-4 text-white font-bold mb-6 sm:mb-8 max-w-xs sm:max-w-sm mx-auto">
+//       {['days', 'hours', 'minutes', 'seconds'].map((key, i) => (
+//         <div key={i} className="flex flex-col items-center">
+//           <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-none">
+//             {timeLeft[key].toString().padStart(2, '0')}
+//           </span>
+//           <span className="text-xs sm:text-sm font-normal mt-1 text-white/70">
+//             {key.charAt(0).toUpperCase() + key.slice(1)}
+//           </span>
+//         </div>
+//       ))}
+//     </div>
+//   ), [timeLeft]);
+
+//   return (
+//     <div className="relative flex flex-col min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#0a1a2f] via-[#0a1a2f] to-[#0e223a] font-poppins">
+//       <header className="flex justify-between items-center px-4 pt-4 sm:px-6 md:px-8 sm:pt-6">
+//         <span className="text-white font-bold tracking-widest text-base sm:text-lg">
+//           WIBEE<span className="text-[#e552ff]">X</span>
+//         </span>
+//       </header>
+
+//       {[0, 1, 2, 3].map((_, i) => (
+//         <div
+//           key={i}
+//           ref={(el) => blobs.current[i] = el}
+//           className="absolute rounded-full blur-3xl pointer-events-none w-[280px] h-[280px] sm:w-[420px] sm:h-[420px] md:w-[600px] md:h-[600px] opacity-30"
+//           style={{
+//             background: i % 2 === 0
+//               ? 'radial-gradient(circle at 60% 40%, #e552ff 60%, transparent 100%)'
+//               : 'radial-gradient(circle at 40% 60%, #52ffc9 60%, transparent 100%)',
+//             zIndex: 0,
+//             willChange: 'transform',
+//             display: 'none'
+//           }}
+//           aria-hidden="true"
+//         />
+//       ))}
+
+//       <main className="flex-1 flex flex-col justify-center items-center relative z-10 w-full px-4">
+//         <div className="w-full text-center sm:max-w-xl sm:mx-auto">
+//           <img
+//             ref={logo3DRef}
+//             src={logoPng}
+//             alt="WibeEx Logo"
+//             className={`w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 object-contain mx-auto mb-4 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+//             onLoad={handleImageLoad}
+//             onError={handleImageError}
+//             loading="eager"
+//           />
+//           <h1 className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 px-2 leading-tight">Simple. Secure. Smart.</h1>
+//           <p className="text-white/80 mb-4 sm:mb-6 text-sm sm:text-base md:text-lg px-2 leading-relaxed">The new age of digital trading is coming.</p>
+//           <p className="mb-4 sm:mb-6 text-sm sm:text-base md:text-lg font-extrabold flex flex-col sm:flex-row items-center justify-center gap-2 px-2">
+//             <span className="text-lg sm:text-xl md:text-2xl" role="img" aria-label="rocket">🚀</span>
+//             <span className="bg-gradient-to-r from-[#e552ff] to-[#52ffc9] text-transparent bg-clip-text">
+//               Expected launch on <span className="underline underline-offset-2">October 10 2025</span>.
+//             </span>
+//           </p>
+//           {countdownDisplay}
+//         </div>
+//       </main>
+
+//       <footer className="mt-auto w-full flex flex-col items-center gap-2 py-4 px-4 bg-transparent sm:flex-row sm:justify-between sm:items-center sm:gap-4 sm:px-8 sm:py-6">
+//         <div className="flex gap-4 mb-1 sm:mb-0">
+//           {socialLinks.map(({ href, icon, label }) => (
+//             <a
+//               key={label}
+//               href={href}
+//               target="_blank"
+//               rel="noopener noreferrer"
+//               aria-label={`Follow us on ${label}`}
+//               className="text-white/70 hover:text-[#52ffc9] text-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#52ffc9] focus:ring-opacity-50 rounded-full p-1"
+//             >
+//               {icon}
+//             </a>
+//           ))}
+//         </div>
+//         <div className="text-xs text-white/40 text-center max-w-full sm:text-right">
+//           © 2025 WibeeX. All Rights Reserved.
+//         </div>
+//       </footer>
+//     </div>
+//   );
+// };
+
+// export default LandingPage;
 import React, { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import logoPng from '../assets/logo_Png.png';
-import { FaInstagram, FaFacebookF, FaTwitter, FaRocket } from 'react-icons/fa';
-import { HiMenu } from 'react-icons/hi';
+import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
 
 const socialLinks = [
-    { href: "https://instagram.com/wibe_ex", icon: <FaInstagram />, label: "Instagram" },
-    { href: "https://x.com/wibe_ex", icon: <FaTwitter />, label: "X" },
-    { href: "https://www.facebook.com/people/WibeeX/61578853760526/", icon: <FaFacebookF />, label: "Facebook" },
+  { href: "https://instagram.com/wibe_ex", icon: <FaInstagram />, label: "Instagram" },
+  { href: "https://x.com/wibe_ex", icon: <FaTwitter />, label: "X" },
+  { href: "https://www.facebook.com/people/WibeeX/61578853760526/", icon: <FaFacebookF />, label: "Facebook" },
 ];
 
 const targetDate = new Date("2025-10-10T00:00:00").getTime();
 
 const LandingPage = () => {
-    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-    const [isLoaded, setIsLoaded] = useState(false);
-    const logo3DRef = useRef();
-    const blob1Ref = useRef();
-    const blob2Ref = useRef();
-    const blob3Ref = useRef();
-    const blob4Ref = useRef();
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [isLoaded, setIsLoaded] = useState(false);
+  const logo3DRef = useRef();
+  const blobs = useRef([]);
 
-    // Optimized countdown timer
-    useEffect(() => {
-        const calculateTimeLeft = () => {
-            const now = new Date().getTime();
-            const difference = targetDate - now;
-            if (difference > 0) {
-                setTimeLeft({
-                    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                    minutes: Math.floor((difference / 1000 / 60) % 60),
-                    seconds: Math.floor((difference / 1000) % 60),
-                });
-            }
-        };
-
-        calculateTimeLeft();
-        const timer = setInterval(calculateTimeLeft, 1000);
-        return () => clearInterval(timer);
-    }, []);
-
-    // Optimized blob animations using CSS transforms
-    useEffect(() => {
-        const animateBlobs = () => {
-            if (!blob1Ref.current || !blob2Ref.current || !blob3Ref.current) return;
-            try {
-                const t = Date.now() / 2000;
-                const w = window.innerWidth;
-                const h = window.innerHeight;
-                // Blob 1: moves from top to mid
-                blob1Ref.current.style.transform =
-                    `translate3d(${w * 0.5 + Math.cos(t) * w * 0.25 - 120}px, ${h * 0.2 + Math.sin(t / 1.2) * h * 0.15 - 150}px, 0)`;
-                // Blob 2: moves from mid to bottom
-                blob2Ref.current.style.transform =
-                    `translate3d(${w * 0.5 + Math.cos(t + Math.PI) * w * 0.22 - 120}px, ${h * 0.5 + Math.sin(t / 1.5 + Math.PI) * h * 0.18 - 120}px, 0)`;
-                // Blob 3: moves from bottom to mid
-                blob3Ref.current.style.transform =
-                    `translate3d(${w * 0.5 + Math.cos(t / 1.3 + 1) * w * 0.18 - 80}px, ${h * 0.8 + Math.sin(t / 1.7 + 2) * h * 0.12 - 80}px, 0)`;
-                // Blob 4: moves from bottom to mid
-                blob4Ref.current.style.transform =
-                    `translate3d(${w * 0.5 + Math.cos(t / 1.3 + 1) * w * 0.18 - 80}px, ${h * 0.8 + Math.sin(t / 1.7 + 2) * h * 0.12 - 80}px, 0)`;
-            } catch (error) {
-                console.error('Animation error:', error);
-            }
-        };
-
-        let animationId = requestAnimationFrame(function animate() {
-            animateBlobs();
-            animationId = requestAnimationFrame(animate);
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
         });
+      }
+    };
 
-        return () => {
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-            }
-        };
-    }, []);
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-    // Logo animation: handle both mouse and touch events only on the logo
-    useEffect(() => {
-        const logo = logo3DRef.current;
-        if (!logo) return;
-        let ticking = false;
+  useEffect(() => {
+    const animateBlobs = () => {
+      const t = Date.now() / 2000;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
 
-        const animate = (clientX, clientY) => {
-            const rect = logo.getBoundingClientRect();
-            const logoX = rect.left + rect.width / 2;
-            const logoY = rect.top + rect.height / 2;
-            const dx = clientX - logoX;
-            const dy = clientY - logoY;
-            const maxTilt = 20;
-            const rotateY = Math.max(-maxTilt, Math.min(maxTilt, dx / 12));
-            const rotateX = Math.max(-maxTilt, Math.min(maxTilt, -dy / 12));
-            logo.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-        };
+      blobs.current.forEach((blob, index) => {
+        const angle = t + index * (Math.PI / 2);
+        const radius = Math.min(w, h) * 0.4;
+        const x = w / 2 + Math.cos(angle) * radius - 150;
+        const y = h / 2 + Math.sin(angle) * radius - 150;
+        if (blob) {
+          blob.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+          blob.style.display = 'block';
+        }
+      });
+    };
 
-        const handleMouseMove = (e) => {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    animate(e.clientX, e.clientY);
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-        const handleMouseLeave = () => {
-            logo.style.transform = '';
-        };
-        const handleTouchMove = (e) => {
-            if (!ticking && e.touches && e.touches.length === 1) {
-                requestAnimationFrame(() => {
-                    const touch = e.touches[0];
-                    animate(touch.clientX, touch.clientY);
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-        const handleTouchEnd = () => {
-            logo.style.transform = '';
-        };
-        logo.addEventListener('mousemove', handleMouseMove, { passive: true });
-        logo.addEventListener('mouseleave', handleMouseLeave, { passive: true });
-        logo.addEventListener('touchmove', handleTouchMove, { passive: true });
-        logo.addEventListener('touchend', handleTouchEnd, { passive: true });
-        return () => {
-            logo.removeEventListener('mousemove', handleMouseMove);
-            logo.removeEventListener('mouseleave', handleMouseLeave);
-            logo.removeEventListener('touchmove', handleTouchMove);
-            logo.removeEventListener('touchend', handleTouchEnd);
-        };
-    }, []);
+    let animationId = requestAnimationFrame(function animate() {
+      animateBlobs();
+      animationId = requestAnimationFrame(animate);
+    });
 
-    // Handle image load
-    const handleImageLoad = useCallback(() => {
-        console.log('Logo loaded successfully');
-        setIsLoaded(true);
-    }, []);
+    return () => cancelAnimationFrame(animationId);
+  }, []);
 
-    const handleImageError = useCallback((error) => {
-        console.error('Logo failed to load:', error);
-        setIsLoaded(true); // Still show the component
-    }, []);
+  useEffect(() => {
+    const logo = logo3DRef.current;
+    if (!logo) return;
+    let ticking = false;
 
-    // Memoize countdown display with perfect mobile layout
-    const countdownDisplay = useMemo(() => (
-        <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-4 text-white font-bold mb-6 sm:mb-8 max-w-xs sm:max-w-sm mx-auto">
-            <div className="flex flex-col items-center">
-                <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-none">{timeLeft.days}</span>
-                <span className="text-xs sm:text-sm font-normal mt-1 text-white/70">Days</span>
-            </div>
-            <div className="flex flex-col items-center">
-                <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-none">{timeLeft.hours.toString().padStart(2, '0')}</span>
-                <span className="text-xs sm:text-sm font-normal mt-1 text-white/70">Hours</span>
-            </div>
-            <div className="flex flex-col items-center">
-                <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-none">{timeLeft.minutes.toString().padStart(2, '0')}</span>
-                <span className="text-xs sm:text-sm font-normal mt-1 text-white/70">Minutes</span>
-            </div>
-            <div className="flex flex-col items-center">
-                <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-none">{timeLeft.seconds.toString().padStart(2, '0')}</span>
-                <span className="text-xs sm:text-sm font-normal mt-1 text-white/70">Seconds</span>
-            </div>
+    const animate = (clientX, clientY) => {
+      const rect = logo.getBoundingClientRect();
+      const logoX = rect.left + rect.width / 2;
+      const logoY = rect.top + rect.height / 2;
+      const dx = clientX - logoX;
+      const dy = clientY - logoY;
+      const maxTilt = 20;
+      const rotateY = Math.max(-maxTilt, Math.min(maxTilt, dx / 12));
+      const rotateX = Math.max(-maxTilt, Math.min(maxTilt, -dy / 12));
+      logo.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    };
+
+    const handleMouseMove = (e) => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          animate(e.clientX, e.clientY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (!ticking && e.touches.length === 1) {
+        requestAnimationFrame(() => {
+          animate(e.touches[0].clientX, e.touches[0].clientY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    const resetTransform = () => logo.style.transform = '';
+
+    logo.addEventListener('mousemove', handleMouseMove);
+    logo.addEventListener('mouseleave', resetTransform);
+    logo.addEventListener('touchmove', handleTouchMove);
+    logo.addEventListener('touchend', resetTransform);
+
+    return () => {
+      logo.removeEventListener('mousemove', handleMouseMove);
+      logo.removeEventListener('mouseleave', resetTransform);
+      logo.removeEventListener('touchmove', handleTouchMove);
+      logo.removeEventListener('touchend', resetTransform);
+    };
+  }, []);
+
+  const handleImageLoad = useCallback(() => setIsLoaded(true), []);
+  const handleImageError = useCallback(() => setIsLoaded(true), []);
+
+  const countdownDisplay = useMemo(() => (
+    <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-4 text-white font-bold mb-6 sm:mb-8 max-w-xs sm:max-w-sm mx-auto">
+      {['days', 'hours', 'minutes', 'seconds'].map((key, i) => (
+        <div key={i} className="flex flex-col items-center">
+          <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-none">
+            {timeLeft[key].toString().padStart(2, '0')}
+          </span>
+          <span className="text-xs sm:text-sm font-normal mt-1 text-white/70">
+            {key.charAt(0).toUpperCase() + key.slice(1)}
+          </span>
         </div>
-    ), [timeLeft]);
+      ))}
+    </div>
+  ), [timeLeft]);
 
-    return (
-        <div className="flex flex-col h-screen bg-gradient-to-br from-[#0a1a2f] via-[#0a1a2f] to-[#0e223a] overflow-hidden border-0 outline-none select-none">
-            {/* Top Bar */}
-            <header className="flex justify-between items-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-6">
-                <div className="flex items-center gap-2">
-                    <span className="text-white font-bold tracking-widest text-base sm:text-lg">WIBEE<span className="text-[#e552ff]">X</span></span>
-                </div>
-            </header>
+  return (
+    <div className="relative flex flex-col min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#0a1a2f] via-[#0a1a2f] to-[#0e223a] font-poppins">
+      <header className="flex justify-between items-center px-4 pt-4 sm:px-6 md:px-8 sm:pt-6">
+        <span className="text-white font-bold tracking-widest text-base sm:text-lg">
+          WIBEE<span className="text-[#e552ff]">X</span>
+        </span>
+      </header>
 
-            {/* Optimized Animated Blobs */}
-            {/* Blob 1: Magenta */}
-            <div
-                ref={blob1Ref}
-                className="absolute rounded-full blur-3xl pointer-events-none w-[420px] h-[420px] sm:w-[600px] sm:h-[600px] opacity-40"
-                style={{
-                    background: 'radial-gradient(circle at 60% 40%, #e552ff 60%, transparent 100%)',
-                    zIndex: 0,
-                    willChange: 'transform',
-                }}
-                aria-hidden="true"
-            />
-            {/* Blob 2: Aqua */}
-            <div
-                ref={blob2Ref}
-                className="absolute rounded-full blur-3xl pointer-events-none w-[420px] h-[420px] sm:w-[600px] sm:h-[600px] opacity-30"
-                style={{
-                    background: 'radial-gradient(circle at 40% 60%, #52ffc9 60%, transparent 100%)',
-                    zIndex: 0,
-                    willChange: 'transform',
-                }}
-                aria-hidden="true"
-            />
-            {/* Blob 3: Magenta */}
-            <div
-                ref={blob3Ref}
-                className="absolute rounded-full blur-3xl pointer-events-none w-[420px] h-[420px] sm:w-[600px] sm:h-[600px] opacity-20"
-                style={{
-                    background: 'radial-gradient(circle at 50% 50%, #e552ff 60%, transparent 100%)',
-                    zIndex: 0,
-                    willChange: 'transform',
-                }}
-                aria-hidden="true"
-            />
-            {/* Blob 4: Aqua */}
-            <div
-                ref={blob4Ref}
-                className="absolute rounded-full blur-3xl pointer-events-none w-[420px] h-[420px] sm:w-[600px] sm:h-[600px] opacity-30"
-                style={{
-                    background: 'radial-gradient(circle at 40% 60%, #52ffc9 60%, transparent 100%)',
-                    zIndex: 0,
-                    willChange: 'transform',
-                }}
-                aria-hidden="true"
-            />
+      {[0, 1, 2, 3].map((_, i) => (
+        <div
+          key={i}
+          ref={(el) => blobs.current[i] = el}
+          className="absolute rounded-full blur-3xl pointer-events-none w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] md:w-[600px] md:h-[600px] opacity-30"
+          style={{
+            background: i % 2 === 0
+              ? 'radial-gradient(circle at 60% 40%, #e552ff 60%, transparent 100%)'
+              : 'radial-gradient(circle at 40% 60%, #52ffc9 60%, transparent 100%)',
+            zIndex: 0,
+            willChange: 'transform',
+            display: 'block'
+          }}
+          aria-hidden="true"
+        />
+      ))}
 
-            {/* Main Content */}
-            <main className="flex-1 flex flex-col justify-center items-center relative z-10 px-0 sm:px-0 md:px-0 m-0">
-                <div className="max-w-xl w-full text-center mt-0 sm:mt-0 md:mt-0">
-                    {/* Centered logo above heading */}
-                    <img
-                        ref={logo3DRef}
-                        src={logoPng}
-                        alt="WibeEx Logo"
-                        className={`w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 object-contain mx-auto mb-3 sm:mb-4 md:mb-6 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-                        onLoad={handleImageLoad}
-                        onError={handleImageError}
-                        loading="eager"
-                    />
-                    <h1 className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 px-2 leading-tight">Simple. Secure. Smart.</h1>
-                    <p className="text-white/80 mb-4 sm:mb-6 md:mb-8 text-sm sm:text-base md:text-lg px-2 leading-relaxed">The new age of digital trading is coming.</p>
-
-                    {/* Expected launch date - styled prominently */}
-                    <p className="mb-4 sm:mb-6 text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-center flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2">
-                        <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl align-middle" role="img" aria-label="rocket">🚀</span>
-                        <span className="bg-gradient-to-r from-[#e552ff] to-[#52ffc9] text-transparent bg-clip-text">
-                            Expected launch on <span className="underline underline-offset-2">October 10 2025</span>.
-                        </span>
-                    </p>
-
-                    {/* Countdown */}
-                    {countdownDisplay}
-                </div>
-            </main>
-
-            {/* Responsive Footer - bulletproof version */}
-            <footer className="mt-auto w-full flex flex-col items-center gap-2 py-4 px-4 bg-transparent sm:flex-row sm:justify-between sm:items-center sm:gap-4 sm:px-8 sm:py-6">
-                <div className="flex gap-4 mb-1 sm:mb-0">
-                    {socialLinks.map(({ href, icon, label }) => (
-                        <a
-                            key={label}
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`Follow us on ${label}`}
-                            className="text-white/70 hover:text-[#52ffc9] text-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#52ffc9] focus:ring-opacity-50 rounded-full p-1"
-                        >
-                            {icon}
-                        </a>
-                    ))}
-                </div>
-                <div className="text-xs text-white/40 text-center break-words max-w-full sm:text-right">
-                    © 2025 WibeeX. All Rights Reserved.
-                </div>
-            </footer>
-
-            <style>{`
-                /* Optimize animations for performance */
-                * {
-                    -webkit-font-smoothing: antialiased;
-                    -moz-osx-font-smoothing: grayscale;
-                }
-                
-                /* Reduce motion for users who prefer it */
-                @media (prefers-reduced-motion: reduce) {
-                    * {
-                        animation-duration: 0.01ms !important;
-                        animation-iteration-count: 1 !important;
-                        transition-duration: 0.01ms !important;
-                    }
-                }
-                
-                /* Optimize for mobile performance */
-                @media (max-width: 768px) {
-                    .blur-3xl {
-                        filter: blur(1.5rem);
-                    }
-                }
-                
-                /* iPhone 7 and small mobile optimizations */
-                @media (max-width: 375px) {
-                    .blur-3xl {
-                        filter: blur(1rem);
-                    }
-                    
-                    /* Ensure countdown fits perfectly on iPhone 7 */
-                    .grid-cols-4 {
-                        gap: 0.25rem;
-                    }
-                }
-                
-                /* Extra small screens */
-                @media (max-width: 320px) {
-                    .blur-3xl {
-                        filter: blur(0.75rem);
-                    }
-                }
-            `}</style>
+      <main className="flex-1 flex flex-col justify-center items-center relative z-10 w-full px-4">
+        <div className="w-full text-center sm:max-w-xl sm:mx-auto">
+          <img
+            ref={logo3DRef}
+            src={logoPng}
+            alt="WibeEx Logo"
+            className={`w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 object-contain mx-auto mb-4 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            loading="eager"
+          />
+          <h1 className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 px-2 leading-tight">Simple. Secure. Smart.</h1>
+          <p className="text-white/80 mb-4 sm:mb-6 text-sm sm:text-base md:text-lg px-2 leading-relaxed">The new age of digital trading is coming.</p>
+          <p className="mb-4 sm:mb-6 text-sm sm:text-base md:text-lg font-extrabold flex flex-col sm:flex-row items-center justify-center gap-2 px-2">
+            <span className="text-lg sm:text-xl md:text-2xl" role="img" aria-label="rocket">🚀</span>
+            <span className="bg-gradient-to-r from-[#e552ff] to-[#52ffc9] text-transparent bg-clip-text">
+              Expected launch on <span className="underline underline-offset-2">October 10 2025</span>.
+            </span>
+          </p>
+          {countdownDisplay}
         </div>
-    );
+      </main>
+
+      <footer className="mt-auto w-full flex flex-col items-center gap-2 py-4 px-4 bg-transparent sm:flex-row sm:justify-between sm:items-center sm:gap-4 sm:px-8 sm:py-6">
+        <div className="flex gap-4 mb-1 sm:mb-0">
+          {socialLinks.map(({ href, icon, label }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Follow us on ${label}`}
+              className="text-white/70 hover:text-[#52ffc9] text-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#52ffc9] focus:ring-opacity-50 rounded-full p-1"
+            >
+              {icon}
+            </a>
+          ))}
+        </div>
+        <div className="text-xs text-white/40 text-center max-w-full sm:text-right">
+          © 2025 WibeeX. All Rights Reserved.
+        </div>
+      </footer>
+    </div>
+  );
 };
 
 export default LandingPage;
