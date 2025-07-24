@@ -166,7 +166,7 @@ const LandingPage = () => {
     ), [timeLeft]);
 
     return (
-        <div className="relative h-screen bg-gradient-to-br from-[#0a1a2f] via-[#0a1a2f] to-[#0e223a] flex flex-col justify-between overflow-hidden border-0 outline-none select-none">
+        <div className="flex flex-col h-screen bg-gradient-to-br from-[#0a1a2f] via-[#0a1a2f] to-[#0e223a] overflow-hidden border-0 outline-none select-none">
             {/* Top Bar */}
             <header className="flex justify-between items-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-6">
                 <div className="flex items-center gap-2">
@@ -249,9 +249,9 @@ const LandingPage = () => {
                 </div>
             </main>
 
-            {/* Responsive Footer */}
-            <footer className="w-full flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-2 sm:gap-4 px-4 py-4 sm:px-8 sm:py-6 z-20 bg-transparent">
-                <div className="flex gap-4 sm:gap-4 mb-1 sm:mb-0">
+            {/* Responsive Footer - bulletproof version */}
+            <footer className="mt-auto w-full flex flex-col items-center gap-2 py-4 px-4 bg-transparent sm:flex-row sm:justify-between sm:items-center sm:gap-4 sm:px-8 sm:py-6">
+                <div className="flex gap-4 mb-1 sm:mb-0">
                     {socialLinks.map(({ href, icon, label }) => (
                         <a
                             key={label}
@@ -259,13 +259,13 @@ const LandingPage = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={`Follow us on ${label}`}
-                            className="text-white/70 hover:text-[#52ffc9] text-xl sm:text-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#52ffc9] focus:ring-opacity-50 rounded-full p-1"
+                            className="text-white/70 hover:text-[#52ffc9] text-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#52ffc9] focus:ring-opacity-50 rounded-full p-1"
                         >
                             {icon}
                         </a>
                     ))}
                 </div>
-                <div className="text-xs text-white/40 text-center sm:text-right">
+                <div className="text-xs text-white/40 text-center break-words max-w-full sm:text-right">
                     © 2025 WibeeX. All Rights Reserved.
                 </div>
             </footer>
