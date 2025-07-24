@@ -99,8 +99,32 @@ const LandingPage = () => {
             }
         };
 
+        // Touch event handler for mobile
+        const handleTouchMove = (e) => {
+            if (!ticking && logo3DRef.current && e.touches && e.touches.length === 1) {
+                requestAnimationFrame(() => {
+                    const touch = e.touches[0];
+                    const rect = logo3DRef.current.getBoundingClientRect();
+                    const logoX = rect.left + rect.width / 2;
+                    const logoY = rect.top + rect.height / 2;
+                    const dx = touch.clientX - logoX;
+                    const dy = touch.clientY - logoY;
+                    const maxTilt = 20;
+                    const rotateY = Math.max(-maxTilt, Math.min(maxTilt, dx / 12));
+                    const rotateX = Math.max(-maxTilt, Math.min(maxTilt, -dy / 12));
+                    logo3DRef.current.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+
         window.addEventListener('mousemove', handleMouseMove, { passive: true });
-        return () => window.removeEventListener('mousemove', handleMouseMove);
+        window.addEventListener('touchmove', handleTouchMove, { passive: true });
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('touchmove', handleTouchMove);
+        };
     }, []);
 
     // Handle image load
@@ -137,7 +161,7 @@ const LandingPage = () => {
     ), [timeLeft]);
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-[#0a1a2f] via-[#0a1a2f] to-[#0e223a] flex flex-col justify-between overflow-hidden border-0 outline-none">
+        <div className="relative h-screen bg-gradient-to-br from-[#0a1a2f] via-[#0a1a2f] to-[#0e223a] flex flex-col justify-between overflow-hidden border-0 outline-none">
             {/* Top Bar */}
             <header className="flex justify-between items-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-6">
                 <div className="flex items-center gap-2">
