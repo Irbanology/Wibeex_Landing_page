@@ -178,6 +178,18 @@ const LandingPage = () => {
             </span>
           </p>
           {countdownDisplay}
+          <p className="text-white font-semibold text-xs">For further updates.</p>
+          <a
+            href="https://t.me/+D8XIJZ0aKJNmZjg8"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center mt-4 px-6 py-2 bg-gradient-to-r from-[#e552ff] to-[#52ffc9] drop-shadow-lg text-black font-semibold text-sm sm:text-base rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#52ffc9] focus:ring-opacity-50"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2 text-white">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 2.848a.75.75 0 0 1 .248.874l-3.313 11.364a.75.75 0 0 1-1.237.362l-3.195-3.166a.25.25 0 0 0-.404.065l-2.178 4.958a.75.75 0 0 1-1.397.014L7.553 13.64l-3.805-1.267a.75.75 0 0 1 .015-1.427l17.25-8.25a.75.75 0 0 1 .739.152Z" />
+            </svg>
+            Join Telegram
+          </a>
         </div>
       </main>
 
